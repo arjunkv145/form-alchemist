@@ -1,0 +1,4 @@
+.render .form-field-error {
+    padding: .2em 0;
+    color: var(--red-color);
+}
