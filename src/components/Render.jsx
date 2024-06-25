@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
-import '../styles/render.css'
+import { StyledRender } from '../styles/StyledRender'
 
 const StyledFormItemWrapper = styled.div`
     ${
@@ -320,11 +320,11 @@ function Render({ form, submit }) {
     }, [])
 
     return (
-        <div className='render'>
+        <StyledRender>
             {
                 !loading && formData.map(generateFormHtml)
             }
-        </div>
+        </StyledRender>
     )
 }
 

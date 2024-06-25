@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import editIcon from '../assets/edit.svg'
 import paletteIcon from '../assets/palette.svg'
 import deleteIcon from '../assets/delete.svg'
-import '../styles/builder.css'
+import { StyledBuilder } from '../styles/StyledBuilder'
 
 const formLayouts = ['container']
 const formFields = {
@@ -810,7 +810,7 @@ function Builder({ build }) {
     }, [popup.show])
 
     return (
-        <div className='builder'>
+        <StyledBuilder>
             <div className='builder__sidebar'>
                 {
                     formLayouts.map((layout, i) => (
@@ -1522,7 +1522,7 @@ function Builder({ build }) {
                     </form>
                 </div>
             </div>
-        </div>
+        </StyledBuilder>
     )
 }
 
