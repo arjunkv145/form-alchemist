@@ -28,13 +28,14 @@ const style1 = `
 
     & label {
         margin-right: 1em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
     & input {
         padding: .65em .8em;
         width: 100%;
-        font-family: inherit;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
@@ -53,6 +54,7 @@ const style2 = `
     margin-top: .6em;
 
     & span {
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 46%);
         display: block;
@@ -66,6 +68,8 @@ const style2 = `
         display: inline-block;
         padding: .5em 3em .5em 1em;
         margin-top: .4em;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         background-color: transparent;
         color: hsl(0, 0%, 19%);
         border: 1px solid hsl(0, 0%, 62%);
@@ -82,7 +86,7 @@ const style2 = `
         transform: translateY(-50%);
         width: 12px;
         height: 12px;
-        background-color: hsl(0, 0%, 95%);
+        background-color: transparent;
         border: 2px solid hsl(0, 0%, 62%);
         border-radius: 50%;
     }
@@ -106,6 +110,8 @@ const textareaStyle = `
 
     & label {
         display: block;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
 
@@ -113,6 +119,7 @@ const textareaStyle = `
         margin-top: .4em;
         padding: .4em;
         width: 100%;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
@@ -133,6 +140,7 @@ const selectStyle = `
 
     & label {
         margin-right: 1em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
@@ -140,6 +148,8 @@ const selectStyle = `
     & select {
         padding: .4em 1.2em .4em .8em;
         width: 100%;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
         border: 1px solid hsl(0, 0%, 62%);
@@ -154,6 +164,7 @@ const buttonStyle = `
     & button {
         margin: .8em 0;
         padding: .7em 2em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: #9658dc;
         color: #f2f2f2;

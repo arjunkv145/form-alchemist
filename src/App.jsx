@@ -356,17 +356,21 @@ function App() {
     //     console.log(data)
     // }
 
+    const func = data => {
+        console.log(data)
+    }
+
     return (
-      <div style={{
-        margin: '40px auto',
-        padding: '1em',
-        width: '400px',
-        border: '1px solid lightgrey',
-        borderRadius: '5px'
-      }}>
-        <Render data={data} />
-      </div>
-        // <Builder build={build} />
+    //   <div style={{
+    //     margin: '40px auto',
+    //     padding: '.5em 1em',
+    //     width: '400px',
+    //     border: '1px solid lightgrey',
+    //     borderRadius: '5px'
+    //   }}>
+    //     <Render form={data} submit={func} />
+    //   </div>
+        <Builder build={func} />
     )
 }
 

@@ -1,4 +1,18 @@
+.render .form-item {
+    position: relative;
+}
+
+.render .form-item.required::before {
+    content:'*';
+    position: absolute;
+    top: -5px;
+    left: -10px;
+    color: var(--red-color);
+}
+
 .render .form-field-error {
-    padding: .2em 0;
+    margin: .2em 0;
+    font-family: var(--primary-font);
+    font-size: .85rem;
     color: var(--red-color);
 }

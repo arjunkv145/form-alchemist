@@ -26,7 +26,7 @@ const findIndexByUid = (items, uid) => {
     return null
 }
 
-function Render({ data }) {
+function Render({ form, submit }) {
     const [formData, setFormData] = useState([])
     const [loading, setLoading] = useState(true)
     const formDataInitialised = useRef(null)
@@ -141,9 +141,8 @@ function Render({ data }) {
         }
 
         if (!hasError) {
-            console.log('valid')
-        } else {
-            console.log('not valid')
+            const formValues = getformValues()
+            submit(formValues)
         }
     }
 
@@ -153,7 +152,7 @@ function Render({ data }) {
 
         if (type === 'text' || type === 'number' || type === 'date' || type === 'time' || type === 'hidden') {
             formItemHtml = (
-                <div>
+                <div className={`form-item${required ? ' required' : ''}`}>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         {type === 'hidden' ? ' Hidden input element' : ''}
                         { label && <label htmlFor={id}>{label}</label> }
@@ -170,7 +169,7 @@ function Render({ data }) {
             )
         } else if (type === 'container') {
             formItemHtml = (
-                <div>
+                <div className='form-item'>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         {
                             formItem.children.map(generateFormHtml)
@@ -180,7 +179,7 @@ function Render({ data }) {
             )
         } else if (type === 'button') {
             formItemHtml = (
-                <div>
+                <div className='form-item'>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         <button
                             type={buttonType}
@@ -198,7 +197,7 @@ function Render({ data }) {
             )
         } else if (type === 'textarea') {
             formItemHtml = (
-                <div>
+                <div className={`form-item${required ? ' required' : ''}`}>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <textarea
@@ -214,7 +213,7 @@ function Render({ data }) {
             )
         } else if (type === 'select') {
             formItemHtml = (
-                <div>
+                <div className={`form-item${required ? ' required' : ''}`}>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <select
@@ -242,7 +241,7 @@ function Render({ data }) {
             )
         } else if (type === 'checkbox') {
             formItemHtml = (
-                <div>
+                <div className={`form-item${required ? ' required' : ''}`}>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         <span>{question}</span>
                         {
@@ -267,7 +266,7 @@ function Render({ data }) {
             )
         } else if (type === 'radio') {
             formItemHtml = (
-                <div>
+                <div className={`form-item${required ? ' required' : ''}`}>
                     <StyledFormItemWrapper $customstyles={customStyles}>
                         <span>{question}</span>
                         {
@@ -300,7 +299,7 @@ function Render({ data }) {
         if (loading && formDataInitialised.current === null) {
             formDataInitialised.current = true
             setFormData(p => {
-                const modifiedData = data.map(fi =>
+                const modifiedData = form.map(fi =>
                     fi.type === 'container' ?
                     {
                         ...fi,
