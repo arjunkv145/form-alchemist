@@ -1,6 +1,5 @@
 import Builder from './components/Builder'
 import Render from './components/Render'
-import './styles/index.css'
 
 const data = [
     {

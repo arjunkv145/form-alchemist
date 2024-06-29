@@ -1,14 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
-import '../styles/render.css'
-
-const StyledFormItemWrapper = styled.div`
-    ${
-        (props) =>
-            props.$customstyles &&
-            css`${props.$customstyles}`
-    }
-`
+import GlobalStyle from '../styles/GlobalStyle'
+import StyledRender from '../styles/StyledRender'
+import StyledFormElementWrapper from '../styles/StyledFormElementWrapper'
 
 const findIndexByUid = (items, uid) => {
     for (let i = 0; i < items.length; i++) {
@@ -147,13 +140,13 @@ function Render({ form, submit }) {
     }
 
     const generateFormHtml = (formItem, i) => {
-        let formItemHtml = ''
+        let formElementHtml = ''
         const { uid, parentContainerUid, type, label, id, optionsCount, question, buttonType, text, required, options, customStyles, fiValue, fiError, ...attr } = formItem
 
         if (type === 'text' || type === 'number' || type === 'date' || type === 'time' || type === 'hidden') {
-            formItemHtml = (
-                <div className={`form-item${required ? ' required' : ''}`}>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className={`form-element${required ? ' required' : ''}`}>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         {type === 'hidden' ? ' Hidden input element' : ''}
                         { label && <label htmlFor={id}>{label}</label> }
                         <input
@@ -163,24 +156,24 @@ function Render({ form, submit }) {
                             value={fiValue}
                             onChange={e => updateField(e.target.value, uid)}
                         />
-                    </StyledFormItemWrapper>
-                    { fiError && <div className='form-field-error'>{fiError}</div> }
+                    </StyledFormElementWrapper>
+                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
                 </div>
             )
         } else if (type === 'container') {
-            formItemHtml = (
-                <div className='form-item'>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className='form-element'>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         {
                             formItem.children.map(generateFormHtml)
                         }
-                    </StyledFormItemWrapper>
+                    </StyledFormElementWrapper>
                 </div>
             )
         } else if (type === 'button') {
-            formItemHtml = (
-                <div className='form-item'>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className='form-element'>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         <button
                             type={buttonType}
                             {...attr}
@@ -192,13 +185,13 @@ function Render({ form, submit }) {
                         >
                             {text}
                         </button>
-                    </StyledFormItemWrapper>
+                    </StyledFormElementWrapper>
                 </div>
             )
         } else if (type === 'textarea') {
-            formItemHtml = (
-                <div className={`form-item${required ? ' required' : ''}`}>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className={`form-element${required ? ' required' : ''}`}>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <textarea
                             {...attr}
@@ -207,14 +200,14 @@ function Render({ form, submit }) {
                             onChange={e => updateField(e.target.value, uid)}
                         >
                         </textarea>
-                    </StyledFormItemWrapper>
-                    { fiError && <div className='form-field-error'>{fiError}</div> }
+                    </StyledFormElementWrapper>
+                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
                 </div>
             )
         } else if (type === 'select') {
-            formItemHtml = (
-                <div className={`form-item${required ? ' required' : ''}`}>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className={`form-element${required ? ' required' : ''}`}>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <select
                             {...attr}
@@ -235,14 +228,14 @@ function Render({ form, submit }) {
                                 ))
                             }
                         </select>
-                    </StyledFormItemWrapper>
-                    { fiError && <div className='form-field-error'>{fiError}</div> }
+                    </StyledFormElementWrapper>
+                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
                 </div>
             )
         } else if (type === 'checkbox') {
-            formItemHtml = (
-                <div className={`form-item${required ? ' required' : ''}`}>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className={`form-element${required ? ' required' : ''}`}>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         <span>{question}</span>
                         {
                             Array.from({ length: optionsCount }).map((_, i) => (
@@ -260,14 +253,14 @@ function Render({ form, submit }) {
                                 </div>
                             ))
                         }
-                    </StyledFormItemWrapper>
-                    { fiError && <div className='form-field-error'>{fiError}</div> }
+                    </StyledFormElementWrapper>
+                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
                 </div>
             )
         } else if (type === 'radio') {
-            formItemHtml = (
-                <div className={`form-item${required ? ' required' : ''}`}>
-                    <StyledFormItemWrapper $customstyles={customStyles}>
+            formElementHtml = (
+                <div className={`form-element${required ? ' required' : ''}`}>
+                    <StyledFormElementWrapper $customstyles={customStyles}>
                         <span>{question}</span>
                         {
                             Array.from({ length: optionsCount }).map((_, i) => (
@@ -285,13 +278,13 @@ function Render({ form, submit }) {
                                 </div>
                             ))
                         }
-                    </StyledFormItemWrapper>
-                    { fiError && <div className='form-field-error'>{fiError}</div> }
+                    </StyledFormElementWrapper>
+                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
                 </div>
             )
         }
         return (
-            <div key={i}>{formItemHtml}</div>
+            <div key={i}>{formElementHtml}</div>
         )
     }
 
@@ -320,11 +313,14 @@ function Render({ form, submit }) {
     }, [])
 
     return (
-        <div className='render'>
-            {
-                !loading && formData.map(generateFormHtml)
-            }
-        </div>
+        <>
+        <GlobalStyle />
+            <StyledRender>
+                {
+                    !loading && formData.map(generateFormHtml)
+                }
+            </StyledRender>
+        </>
     )
 }
 
