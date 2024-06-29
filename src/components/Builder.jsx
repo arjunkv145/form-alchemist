@@ -12,8 +12,8 @@ const formFields = {
     number: ['label', 'id', 'name', 'placeholder', 'required', 'readOnly', 'disabled', 'min', 'max'],
     textarea: ['label', 'id', 'name', 'placeholder', 'required', 'readOnly', 'disabled', 'minLength', 'maxLength', 'rows', 'cols'],
     select: ['label', 'id', 'name', 'required', 'disabled', 'multiple', 'optionsCount', { options: ['value', 'text', 'selected', 'disabled'] }],
-    checkbox: ['question', 'required', 'optionsCount', { options: ['label', 'id', 'name', 'checked', 'disabled'] }],
-    radio: ['question', 'required', 'optionsCount', { options: ['label', 'id', 'name', 'checked', 'disabled'] }],
+    checkbox: ['question', 'required', 'optionsCount', { options: ['label', 'id', 'name', 'value', 'checked', 'disabled'] }],
+    radio: ['question', 'name', 'required', 'optionsCount', { options: ['label', 'id', 'value', 'checked', 'disabled'] }],
     date: ['label', 'id', 'name', 'required', 'readOnly', 'disabled'],
     time: ['label', 'id', 'name', 'required', 'readOnly', 'disabled'],
     button: ['buttonType', 'id', 'name', 'disabled', 'text'],
@@ -28,13 +28,14 @@ const style1 = `
 
     & label {
         margin-right: 1em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
     & input {
         padding: .65em .8em;
         width: 100%;
-        font-family: inherit;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
@@ -53,6 +54,7 @@ const style2 = `
     margin-top: .6em;
 
     & span {
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 46%);
         display: block;
@@ -66,6 +68,8 @@ const style2 = `
         display: inline-block;
         padding: .5em 3em .5em 1em;
         margin-top: .4em;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         background-color: transparent;
         color: hsl(0, 0%, 19%);
         border: 1px solid hsl(0, 0%, 62%);
@@ -82,7 +86,7 @@ const style2 = `
         transform: translateY(-50%);
         width: 12px;
         height: 12px;
-        background-color: hsl(0, 0%, 95%);
+        background-color: transparent;
         border: 2px solid hsl(0, 0%, 62%);
         border-radius: 50%;
     }
@@ -106,6 +110,8 @@ const textareaStyle = `
 
     & label {
         display: block;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
 
@@ -113,6 +119,7 @@ const textareaStyle = `
         margin-top: .4em;
         padding: .4em;
         width: 100%;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
@@ -133,6 +140,7 @@ const selectStyle = `
 
     & label {
         margin-right: 1em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
@@ -140,6 +148,8 @@ const selectStyle = `
     & select {
         padding: .4em 1.2em .4em .8em;
         width: 100%;
+        font-family: Verdana, sans-serif;
+        font-size: .9rem;
         background-color: hsl(0, 0%, 100%);
         color: hsl(0, 0%, 19%);
         border: 1px solid hsl(0, 0%, 62%);
@@ -154,6 +164,7 @@ const buttonStyle = `
     & button {
         margin: .8em 0;
         padding: .7em 2em;
+        font-family: Verdana, sans-serif;
         font-size: .9rem;
         background-color: #9658dc;
         color: #f2f2f2;
@@ -219,8 +230,8 @@ function Builder({ build }) {
     const [formData, setFormData] = useState([])
     const dropPointRef = useRef(null)
     const popupRef = useRef(null)
-    const [popup, setPopup] = useState({ 
-        show: false, 
+    const [popup, setPopup] = useState({
+        show: false,
         element: { type: null, dropPointUid: null, uid: null },
         type: null // add or edit
     })
@@ -265,6 +276,7 @@ function Builder({ build }) {
                 label: ['', '', '', '', '', '', '', '', '', ''],
                 id: ['', '', '', '', '', '', '', '', '', ''],
                 name: ['', '', '', '', '', '', '', '', '', ''],
+                value: ['', '', '', '', '', '', '', '', '', ''],
                 checked: [false, false, false, false, false, false, false, false, false, false],
                 disabled: [false, false, false, false, false, false, false, false, false, false]
             }
@@ -273,7 +285,7 @@ function Builder({ build }) {
             options: {
                 label: ['', '', '', '', '', '', '', '', '', ''],
                 id: ['', '', '', '', '', '', '', '', '', ''],
-                name: ['', '', '', '', '', '', '', '', '', ''],
+                value: ['', '', '', '', '', '', '', '', '', ''],
                 checked: [false, false, false, false, false, false, false, false, false, false],
                 disabled: [false, false, false, false, false, false, false, false, false, false]
             }
@@ -336,6 +348,7 @@ function Builder({ build }) {
                             label: ['', '', '', '', '', '', '', '', '', ''],
                             id: ['', '', '', '', '', '', '', '', '', ''],
                             name: ['', '', '', '', '', '', '', '', '', ''],
+                            value: ['', '', '', '', '', '', '', '', '', ''],
                             checked: [false, false, false, false, false, false, false, false, false, false],
                             disabled: [false, false, false, false, false, false, false, false, false, false]
                         }
@@ -344,7 +357,7 @@ function Builder({ build }) {
                         options: {
                             label: ['', '', '', '', '', '', '', '', '', ''],
                             id: ['', '', '', '', '', '', '', '', '', ''],
-                            name: ['', '', '', '', '', '', '', '', '', ''],
+                            value: ['', '', '', '', '', '', '', '', '', ''],
                             checked: [false, false, false, false, false, false, false, false, false, false],
                             disabled: [false, false, false, false, false, false, false, false, false, false]
                         }
@@ -639,7 +652,7 @@ function Builder({ build }) {
                                     <input
                                         type={type}
                                         id={options.id[i]}
-                                        name={options.name[i]}
+                                        name={attr.name}
                                         checked={options.checked[i]}
                                         disabled={options.disabled[i]}
                                         readOnly={true}
@@ -693,6 +706,7 @@ function Builder({ build }) {
                     label: ['', '', '', '', '', '', '', '', '', ''],
                     id: ['', '', '', '', '', '', '', '', '', ''],
                     name: ['', '', '', '', '', '', '', '', '', ''],
+                    value: ['', '', '', '', '', '', '', '', '', ''],
                     checked: [false, false, false, false, false, false, false, false, false, false],
                     disabled: [false, false, false, false, false, false, false, false, false, false]
                 }
@@ -701,7 +715,7 @@ function Builder({ build }) {
                 options: {
                     label: ['', '', '', '', '', '', '', '', '', ''],
                     id: ['', '', '', '', '', '', '', '', '', ''],
-                    name: ['', '', '', '', '', '', '', '', '', ''],
+                    value: ['', '', '', '', '', '', '', '', '', ''],
                     checked: [false, false, false, false, false, false, false, false, false, false],
                     disabled: [false, false, false, false, false, false, false, false, false, false]
                 }
@@ -729,6 +743,7 @@ function Builder({ build }) {
                 label: [...options.label],
                 id: [...options.id],
                 name: [...options.name],
+                value: [...options.value],
                 checked: [...options.checked],
                 disabled: [...options.disabled]
             }
@@ -736,7 +751,7 @@ function Builder({ build }) {
             initialFormFieldData.radio.options = {
                 label: [...options.label],
                 id: [...options.id],
-                name: [...options.name],
+                value: [...options.value],
                 checked: [...options.checked],
                 disabled: [...options.disabled]
             }
@@ -847,13 +862,13 @@ function Builder({ build }) {
                         e.preventDefault()
                         updateStyle()
                     }}>
-                        <textarea 
+                        <textarea
                             value={styleEditor.customStyles}
                             onChange={e => setStyleEditor(p => ({ ...p, customStyles: e.target.value }))}
                         ></textarea>
                         <div className='builder__style-editor-btn-wrapper'>
-                            <button 
-                                type='button' 
+                            <button
+                                type='button'
                                 className='builder__style-editor-btn-cancel'
                                 onClick={() => setStyleEditor(p => ({ ...p, show: false, uid: null, customStyles: `` }))}
                             >
@@ -1357,12 +1372,35 @@ function Builder({ build }) {
                                                         ))}
                                                     />
                                                 </div>
+                                                {
+                                                    popup.element.type === 'checkbox' &&
+                                                    <div>
+                                                        <input
+                                                            type='text'
+                                                            name={`nameOption${i + 1}`}
+                                                            value={formFieldData[popup.element.type].options.name[i]}
+                                                            placeholder='Name'
+                                                            onChange={e => setFormFieldData(p => (
+                                                                {
+                                                                    ...p,
+                                                                    [popup.element.type]: {
+                                                                        ...p[popup.element.type],
+                                                                        options: {
+                                                                            ...p[popup.element.type].options,
+                                                                            name: p[popup.element.type].options.name.map((op, i1) => i1 === i ? e.target.value : op)
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ))}
+                                                        />
+                                                    </div>
+                                                }
                                                 <div>
                                                     <input
                                                         type='text'
-                                                        name={`nameOption${i + 1}`}
-                                                        value={formFieldData[popup.element.type].options.name[i]}
-                                                        placeholder='Name'
+                                                        name={`valueOption${i + 1}`}
+                                                        value={formFieldData[popup.element.type].options.value[i]}
+                                                        placeholder='Value'
                                                         onChange={e => setFormFieldData(p => (
                                                             {
                                                                 ...p,
@@ -1370,7 +1408,7 @@ function Builder({ build }) {
                                                                     ...p[popup.element.type],
                                                                     options: {
                                                                         ...p[popup.element.type].options,
-                                                                        name: p[popup.element.type].options.name.map((op, i1) => i1 === i ? e.target.value : op)
+                                                                        value: p[popup.element.type].options.value.map((op, i1) => i1 === i ? e.target.value : op)
                                                                     }
                                                                 }
                                                             }
@@ -1470,8 +1508,8 @@ function Builder({ build }) {
                             )
                         }
                         <div className='builder__popup-btn-wrapper'>
-                            <button 
-                                type='button' 
+                            <button
+                                type='button'
                                 className='builder__popup-btn-cancel'
                                 onClick={() => setPopup(p => ({ ...p, show: false }))}
                             >
