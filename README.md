@@ -10,7 +10,7 @@ npm install form-alchemist
 ## Usage
 #### Builder component
 ```javascript
-import { Builder } from 'form-builder'
+import { Builder } from 'form-alchemist'
 function App() {
     // the form data is passed as a parameter to the build function
     const build = formData => {
@@ -22,7 +22,7 @@ function App() {
 
 #### Render component
 ```javascript
-import { Render } from 'form-builder'
+import { Render } from 'form-alchemist'
 function App() {
     // the form data created from the builder component
     form = JSON.stringify(localStorage.getItem('formData'))

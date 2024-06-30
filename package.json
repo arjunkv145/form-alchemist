@@ -1,14 +1,40 @@
 {
   "name": "form-alchemist",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.1.0",
+  "description": "Custom Form Builder with drag-and-drop interface and a Renderer to render the created form with dynamic validation.",
   "type": "module",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "files": [
+    "/dist"
+  ],
+  "keywords": [
+    "form",
+    "builder",
+    "react"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arjunkv145/form-alchemist.git"
+  },
+  "author": "Arjun K V",
+  "bugs": {
+    "url": "https://github.com/arjunkv145/form-alchemist/issues"
+  },
+  "homepage": "https://github.com/arjunkv145/form-alchemist#readme",
   "dependencies": {
     "nanoid": "^5.0.7",
     "react": "^18.2.0",
@@ -24,5 +50,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "vite": "^5.2.0"
+  },
+  "peerDependencies": {
+    "nanoid": "^5.0.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.1.11"
   }
 }
