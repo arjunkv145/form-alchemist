@@ -2,52 +2,115 @@ import { useEffect, useRef, useState } from 'react'
 import GlobalStyle from '../styles/GlobalStyle'
 import StyledRender from '../styles/StyledRender'
 import StyledFormElementWrapper from '../styles/StyledFormElementWrapper'
+import findIndexByUid from '../utils/findIndexByUid'
 
-const findIndexByUid = (items, uid) => {
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i]
-        if (item.uid === uid) {
-            return { index: i, item }
-        }
-        if (item.children) {
-            const nestedItem = findIndexByUid(item.children, uid)
-            if (nestedItem) {
-                return { index: i, nestedItem }
-            }
-        }
+function Render({ form = [], submit = () => {} }) {
+    if (!Array.isArray(form)) {
+        throw new Error('The "form" prop must be an array.');
     }
-    return null
-}
+    
+    if (typeof submit !== 'function') {
+        throw new Error('The "submit" prop must be a function.');
+    }
 
-function Render({ form, submit }) {
     const [formData, setFormData] = useState([])
     const [loading, setLoading] = useState(true)
     const formDataInitialised = useRef(null)
 
-    const updateField = (fiValue, uid, type, optionIndex) => {
-        const { index, item, nestedItem } = findIndexByUid(formData, uid)
-        const fiError = ''
+    const updateElement = (feValue, uid, type, optionIndex) => {
+        const { index, element, nestedElement } = findIndexByUid(formData, uid)
+        const feError = ''
         if (type === 'checkbox') {
-            if (item) {
-                setFormData(p => p.map(fi => fi.uid === uid ? ({ ...fi, fiError, options: { ...fi.options, checked: fi.options.checked.map((checkedVal, i) => i === optionIndex ? !checkedVal : checkedVal)} }) : fi))
+            if (element) {
+                setFormData(prev => prev.map(
+                    formElement => formElement.uid === uid ? 
+                    ({ 
+                        ...formElement, 
+                        feError, 
+                        options: { 
+                            ...formElement.options, 
+                            checked: formElement.options.checked.map((checkedVal, i) => i === optionIndex ? !checkedVal : checkedVal)} 
+                    }) : 
+                    formElement
+                ))
             } else {
-                setFormData(p => p.map((fi, i1) => i1 === index ?
-                ({ ...fi, children: fi.children.map((nfi, i2) => i2 === nestedItem.index ? ({ ...nfi, fiError, options: { ...nfi.options, checked: nfi.options.checked.map((checkedVal, i) => i === optionIndex ? !checkedVal : checkedVal)} }) : nfi) }) :
-                fi))
+                setFormData(prev => prev.map(
+                    (formElement, i) => i === index ?
+                    ({ 
+                        ...formElement, 
+                        children: formElement.children.map(
+                            (nestedFormElement, i) => i === nestedElement.index ? 
+                            ({ 
+                                ...nestedFormElement, 
+                                feError, 
+                                options: { 
+                                    ...nestedFormElement.options, 
+                                    checked: nestedFormElement.options.checked.map((checkedVal, i) => i === optionIndex ? !checkedVal : checkedVal)
+                                } 
+                            }) : 
+                            nestedFormElement
+                        ) 
+                    }) : 
+                    formElement
+                ))
             }
         } else if (type === 'radio') {
-            if (item) {
-                setFormData(p => p.map(fi => fi.uid === uid ? ({ ...fi, fiValue, fiError, options: { ...fi.options, checked: fi.options.checked.map((_, i) => i === optionIndex ? true : false)} }) : fi))
+            if (element) {
+                setFormData(prev => prev.map(
+                    formElement => formElement.uid === uid ? 
+                    ({ 
+                        ...formElement, 
+                        feValue, 
+                        feError, 
+                        options: { 
+                            ...formElement.options, 
+                            checked: formElement.options.checked.map((_, i) => i === optionIndex ? true : false)
+                        } 
+                    }) : 
+                    formElement
+                ))
             } else {
-                setFormData(p => p.map((fi, i1) => i1 === index ?
-                ({ ...fi, children: fi.children.map((nfi, i2) => i2 === nestedItem.index ? ({ ...nfi, fiValue, fiError, options: { ...nfi.options, checked: nfi.options.checked.map((_, i) => i === optionIndex ? true : false)} }) : nfi) }) :
-                fi))
+                setFormData(prev => prev.map(
+                    (formElement, i) => i === index ?
+                    ({ 
+                        ...formElement, 
+                        children: formElement.children.map(
+                            (nestedFormElement, i) => i === nestedElement.index ? 
+                            ({ 
+                                ...nestedFormElement, 
+                                feValue, 
+                                feError, 
+                                options: { 
+                                    ...nestedFormElement.options, 
+                                    checked: nestedFormElement.options.checked.map((_, i) => i === optionIndex ? true : false)
+                                } 
+                            }) : 
+                            nestedFormElement
+                        ) 
+                    }) : 
+                    formElement
+                ))
             }
         } else {
-            if (item) {
-                setFormData(p => p.map(fi => fi.uid === uid ? ({ ...fi, fiValue, fiError }) : fi))
+            if (element) {
+                setFormData(prev => prev.map(
+                    formElement => formElement.uid === uid ? 
+                    ({ ...formElement, feValue, feError }) : 
+                    formElement
+                ))
             } else {
-                setFormData(p => p.map((fi, i1) => i1 === index ? ({ ...fi, children: fi.children.map((nfi, i2) => i2 === nestedItem.index ? ({ ...nfi, fiValue, fiError }) : nfi) }) : fi))
+                setFormData(prev => prev.map(
+                    (formElement, i) => i === index ? 
+                    ({ 
+                        ...formElement, 
+                        children: formElement.children.map(
+                            (nestedFormElement, i) => i === nestedElement.index ? 
+                            ({ ...nestedFormElement, feValue, feError }) : 
+                            nestedFormElement
+                        ) 
+                    }) : 
+                    formElement
+                ))
             }
         }
     }
@@ -55,39 +118,60 @@ function Render({ form, submit }) {
     const getformValues = () => {
         let formValues = []
         for (let i = 0; i < formData.length; i++) {
-            const fi = formData[i]
-            if (fi.type === 'button') {
+            const formElement = formData[i]
+            if (formElement.type === 'button') {
                 continue
             }
-            if (fi.type === 'container') {
-                for (let j = 0; j < fi.children.length; j++) {
-                    const nfi = fi.children[j]
-                    if (nfi.type !== 'button') {
-                        if (nfi.type === 'checkbox') {
-                            const checkboxValues = Array.from({ length: nfi.optionsCount }).map((_, i) => ({ [nfi.options.name[i]]: nfi.options.checked[i] }))
+            if (formElement.type === 'container') {
+                for (let j = 0; j < formElement.children.length; j++) {
+                    const nestedFormElement = formElement.children[j]
+                    if (nestedFormElement.type !== 'button') {
+                        if (nestedFormElement.type === 'checkbox') {
+                            const checkboxValues = Array.from({ length: nestedFormElement.optionsCount }).map(
+                                (_, i) => ({ 
+                                    [nestedFormElement.options.name[i]]: nestedFormElement.options.checked[i] 
+                                })
+                            )
                             formValues = [...formValues, ...checkboxValues]
                         } else {
-                            formValues = [...formValues, { [nfi.name]: nfi.fiValue }]
+                            formValues = [...formValues, { [nestedFormElement.name]: nestedFormElement.feValue }]
                         }
                     }
                 }
-            } else if (fi.type === 'checkbox') {
-                const checkboxValues = Array.from({ length: fi.optionsCount }).map((_, i) => ({ [fi.options.name[i]]: fi.options.checked[i] }))
+            } else if (formElement.type === 'checkbox') {
+                const checkboxValues = Array.from({ length: formElement.optionsCount }).map(
+                    (_, i) => ({ [formElement.options.name[i]]: formElement.options.checked[i] })
+                )
                 formValues = [...formValues, ...checkboxValues]
             } else {
-                formValues = [...formValues, { [fi.name]: fi.fiValue }]
+                formValues = [...formValues, { [formElement.name]: formElement.feValue }]
             }
         }
         return formValues
     }
 
     const setErrorMessage = (uid) => {
-        const { index, item, nestedItem } = findIndexByUid(formData, uid)
-        const fiError = 'This field is required'
-        if (item) {
-            setFormData(p => p.map(fi => fi.uid === uid ? ({ ...fi, fiError }) : fi))
+        const { index, element, nestedElement } = findIndexByUid(formData, uid)
+        const feError = 'This field is required'
+        if (element) {
+            setFormData(prev => prev.map(
+                formElement => formElement.uid === uid ? 
+                ({ ...formElement, feError }) : 
+                formElement
+            ))
         } else {
-            setFormData(p => p.map((fi, i1) => i1 === index ? ({ ...fi, children: fi.children.map((nfi, i2) => i2 === nestedItem.index ? ({ ...nfi, fiError }) : nfi) }) : fi))
+            setFormData(prev => prev.map(
+                (formElement, i) => i === index ? 
+                ({ 
+                    ...formElement, 
+                    children: formElement.children.map(
+                        (nestedFormElement, i) => i === nestedElement.index ? 
+                        ({ ...nestedFormElement, feError }) : 
+                        nestedFormElement
+                    ) 
+                }) : 
+                formElement
+            ))
         }
     }
 
@@ -95,40 +179,47 @@ function Render({ form, submit }) {
         let hasError = false
 
         for (let i = 0; i < formData.length; i++) {
-            const fi = formData[i]
-            if (fi.type === 'button' || fi.type === 'hidden') {
+            const formElement = formData[i]
+
+            if (formElement.type === 'button' || formElement.type === 'hidden') {
                 continue
             }
-            if (fi.type === 'container') {
-                for (let j = 0; j < fi.children.length; j++) {
-                    const nfi = fi.children[j]
-                    if (nfi.type !== 'button' && nfi.type !== 'hidden') {
-                        if (nfi.type === 'checkbox') {
-                            if (nfi.required === true) {
-                                if (!nfi.options.checked.slice(0, nfi.optionsCount).includes(true)) {
-                                    hasError = true
-                                    setErrorMessage(nfi.uid)
-                                }
+
+            if (formElement.type === 'container') {
+                for (let j = 0; j < formElement.children.length; j++) {
+                    const nestedFormElement = formElement.children[j]
+
+                    if (nestedFormElement.type === 'button' || nestedFormElement.type === 'hidden') {
+                        continue
+                    }
+
+                    if (nestedFormElement.required === true) {
+                        if (nestedFormElement.type === 'checkbox') {
+                            if (!nestedFormElement.options.checked.slice(0, nestedFormElement.optionsCount).includes(true)) {
+                                hasError = true
+                                setErrorMessage(nestedFormElement.uid)
                             }
                         } else {
-                            if (nfi.required === true && nfi.fiValue.trim() === '') {
+                            if (nestedFormElement.feValue.trim() === '') {
                                 hasError = true
-                                setErrorMessage(nfi.uid)
+                                setErrorMessage(nestedFormElement.uid)
                             }
                         }
                     }
                 }
-            } else if (fi.type === 'checkbox') {
-                if (fi.required === true) {
-                    if (!fi.options.checked.slice(0, fi.optionsCount).includes(true)) {
-                        hasError = true
-                        setErrorMessage(fi.uid)
-                    }
-                }
             } else {
-                if (fi.required === true && fi.fiValue.trim() === '') {
-                    hasError = true
-                    setErrorMessage(fi.uid)
+                if (formElement.required === true) {
+                    if (formElement.type === 'checkbox') {
+                        if (!formElement.options.checked.slice(0, formElement.optionsCount).includes(true)) {
+                            hasError = true
+                            setErrorMessage(formElement.uid)
+                        }
+                    } else {
+                        if (formElement.feValue.trim() === '') {
+                            hasError = true
+                            setErrorMessage(formElement.uid)
+                        }
+                    }
                 }
             }
         }
@@ -139,9 +230,12 @@ function Render({ form, submit }) {
         }
     }
 
-    const generateFormHtml = (formItem, i) => {
+    const generateFormHtml = (formElement, i) => {
         let formElementHtml = ''
-        const { uid, parentContainerUid, type, label, id, optionsCount, question, buttonType, text, required, options, customStyles, fiValue, fiError, ...attr } = formItem
+        const { uid, parentContainerUid, type, buttonType, label, text, heading, optionsCount, customStyles, options, feValue, feError, ...rest } = formElement
+        const attributes = rest?.attributes
+        const id = attributes?.id
+        const required = attributes?.required
 
         if (type === 'text' || type === 'number' || type === 'date' || type === 'time' || type === 'hidden') {
             formElementHtml = (
@@ -150,14 +244,14 @@ function Render({ form, submit }) {
                         {type === 'hidden' ? ' Hidden input element' : ''}
                         { label && <label htmlFor={id}>{label}</label> }
                         <input
-                            {...attr}
+                            {...attributes}
                             type={type}
                             id={id}
-                            value={fiValue}
-                            onChange={e => updateField(e.target.value, uid)}
+                            value={feValue}
+                            onChange={e => updateElement(e.target.value, uid)}
                         />
                     </StyledFormElementWrapper>
-                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
+                    { feError && <div className='form-element__error-message'>{feError}</div> }
                 </div>
             )
         } else if (type === 'container') {
@@ -165,7 +259,7 @@ function Render({ form, submit }) {
                 <div className='form-element'>
                     <StyledFormElementWrapper $customstyles={customStyles}>
                         {
-                            formItem.children.map(generateFormHtml)
+                            formElement.children.map(generateFormHtml)
                         }
                     </StyledFormElementWrapper>
                 </div>
@@ -176,7 +270,7 @@ function Render({ form, submit }) {
                     <StyledFormElementWrapper $customstyles={customStyles}>
                         <button
                             type={buttonType}
-                            {...attr}
+                            {...attributes}
                             onClick={() => {
                                 if (buttonType === 'submit') {
                                     handleSubmit()
@@ -194,14 +288,14 @@ function Render({ form, submit }) {
                     <StyledFormElementWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <textarea
-                            {...attr}
+                            {...attributes}
                             id={id}
-                            value={fiValue}
-                            onChange={e => updateField(e.target.value, uid)}
+                            value={feValue}
+                            onChange={e => updateElement(e.target.value, uid)}
                         >
                         </textarea>
                     </StyledFormElementWrapper>
-                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
+                    { feError && <div className='form-element__error-message'>{feError}</div> }
                 </div>
             )
         } else if (type === 'select') {
@@ -210,10 +304,10 @@ function Render({ form, submit }) {
                     <StyledFormElementWrapper $customstyles={customStyles}>
                         { label && <label htmlFor={id}>{label}</label> }
                         <select
-                            {...attr}
+                            {...attributes}
                             id={id}
-                            value={fiValue}
-                            onChange={e => updateField(e.target.value, uid)}
+                            value={feValue}
+                            onChange={e => updateElement(e.target.value, uid)}
                         >
                             <option value=''>select an option</option>
                             {
@@ -229,14 +323,14 @@ function Render({ form, submit }) {
                             }
                         </select>
                     </StyledFormElementWrapper>
-                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
+                    { feError && <div className='form-element__error-message'>{feError}</div> }
                 </div>
             )
         } else if (type === 'checkbox') {
             formElementHtml = (
                 <div className={`form-element${required ? ' required' : ''}`}>
                     <StyledFormElementWrapper $customstyles={customStyles}>
-                        <span>{question}</span>
+                        <span>{heading}</span>
                         {
                             Array.from({ length: optionsCount }).map((_, i) => (
                                 <div key={i}>
@@ -247,39 +341,39 @@ function Render({ form, submit }) {
                                         value={options.value[i]}
                                         checked={options.checked[i]}
                                         disabled={options.disabled[i]}
-                                        onChange={e => updateField(e.target.value, uid, type, i)}
+                                        onChange={e => updateElement(e.target.value, uid, type, i)}
                                     />
                                     { options.label[i] && <label htmlFor={options.id[i]}>{options.label[i]}</label> }
                                 </div>
                             ))
                         }
                     </StyledFormElementWrapper>
-                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
+                    { feError && <div className='form-element__error-message'>{feError}</div> }
                 </div>
             )
         } else if (type === 'radio') {
             formElementHtml = (
                 <div className={`form-element${required ? ' required' : ''}`}>
                     <StyledFormElementWrapper $customstyles={customStyles}>
-                        <span>{question}</span>
+                        <span>{heading}</span>
                         {
                             Array.from({ length: optionsCount }).map((_, i) => (
                                 <div key={i}>
                                     <input
                                         type={type}
                                         id={options.id[i]}
-                                        name={attr.name}
+                                        name={attributes.name}
                                         value={options.value[i]}
                                         checked={options.checked[i]}
                                         disabled={options.disabled[i]}
-                                        onChange={e => updateField(e.target.value, uid, type, i)}
+                                        onChange={e => updateElement(e.target.value, uid, type, i)}
                                     />
                                     { options.label[i] && <label htmlFor={options.id[i]}>{options.label[i]}</label> }
                                 </div>
                             ))
                         }
                     </StyledFormElementWrapper>
-                    { fiError && <div className='form-element__error-message'>{fiError}</div> }
+                    { feError && <div className='form-element__error-message'>{feError}</div> }
                 </div>
             )
         }
@@ -291,26 +385,26 @@ function Render({ form, submit }) {
     useEffect(() => {
         if (loading && formDataInitialised.current === null) {
             formDataInitialised.current = true
-            setFormData(p => {
-                const modifiedData = form.map(fi =>
-                    fi.type === 'container' ?
+            setFormData(prev => {
+                const modifiedForm = form.map(formElement =>
+                    formElement.type === 'container' ?
                     {
-                        ...fi,
-                        children: fi.children.map(
-                            nfi => nfi.type === 'checkbox' ?
-                            ({ ...nfi, fiValue: [], fiError: '' }) :
-                            ({ ...nfi, fiValue: '', fiError: '' })
+                        ...formElement,
+                        children: formElement.children.map(
+                            nestedFormElement => nestedFormElement.type === 'checkbox' ?
+                            ({ ...nestedFormElement, feValue: [], feError: '' }) :
+                            ({ ...nestedFormElement, feValue: '', feError: '' })
                         )
                     } :
-                    fi.type === 'checkbox' ?
-                    ({ ...fi, fiValue: [], fiError: '' }) :
-                    ({ ...fi, fiValue: '', fiError: '' })
+                    formElement.type === 'checkbox' ?
+                    ({ ...formElement, feValue: [], feError: '' }) :
+                    ({ ...formElement, feValue: '', feError: '' })
                 )
-                return [...p, ...modifiedData]
+                return [...prev, ...modifiedForm]
             })
             setLoading(false)
         }
-    }, [])
+    }, [form, loading])
 
     return (
         <>

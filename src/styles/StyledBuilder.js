@@ -364,8 +364,8 @@ const StyledBuilder = styled.div`
         right: 10px;
         top: 50%;
         transform: translateY(-50%);
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         background-color: var(--neutral-color-100);
         border: 1px solid var(--neutral-color-400);
         border-radius: 25px;
@@ -377,8 +377,8 @@ const StyledBuilder = styled.div`
         right: 12px;
         top: 50%;
         transform: translateY(-50%);
-        width: 9px;
-        height: 9px;
+        width: 8px;
+        height: 8px;
         background-color: var(--neutral-color-400);
         border-radius: 25px;
     }

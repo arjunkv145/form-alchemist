@@ -140,7 +140,11 @@ const getInitialFormElementData = () => ({
     }
 })
 
-function Builder({ build }) {
+function Builder({ build = () => {} }) {
+    if (typeof build !== 'function') {
+        throw new Error('The "build" prop must be a function.');
+    }
+
     const [formData, setFormData] = useState([])
     const dropPointRef = useRef(null)
     const elementEditorRef = useRef(null)
@@ -299,14 +303,8 @@ function Builder({ build }) {
     const generateFormHtml = (formElement, i) => {
         let formElementHtml = ''
         const { uid, parentContainerUid, type, buttonType, label, text, heading, optionsCount, customStyles, options, ...rest } = formElement
-        let attributes
-        let required
-        let id
-        if (type !== 'container') {
-            attributes = rest?.attributes
-            required = attributes?.required
-            id = attributes?.id
-        }
+        const attributes = rest?.attributes
+        const id = attributes?.id
 
         if (type === 'text' || type === 'number' || type === 'date' || type === 'time' || type === 'hidden') {
             formElementHtml = (
@@ -838,7 +836,7 @@ function Builder({ build }) {
                                         name='value'
                                         value={formElementData.attributes.value}
                                         placeholder='Value'
-                                        onChange={e => setFormElementData(prev => ({ ...prev, attributes: { ...prev.attributes, name: e.target.value } }))}
+                                        onChange={e => setFormElementData(prev => ({ ...prev, attributes: { ...prev.attributes, value: e.target.value } }))}
                                     />
                                 </div>
                             }
