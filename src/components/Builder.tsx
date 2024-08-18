@@ -8,9 +8,8 @@ import StyledFormElementWrapper from '../styles/StyledFormElementWrapper';
 import editIcon from '../assets/edit.svg';
 import paletteIcon from '../assets/palette.svg';
 import deleteIcon from '../assets/delete.svg';
-
-const rootPid = 'root';
-// const optionsLimit = 10;
+import { rootPid } from '../constants/forms';
+import Draggable from './Draggable';
 
 function findIndexByUid(formElements: FormElement[], uid: string) {
     for (let i = 0; i < formElements.length; i++) {
@@ -218,108 +217,6 @@ function Builder() {
         setFormData((prev) => prev.map((fe) => (fe.uid === uid ? { ...fe, customStyles } : fe)));
         setStyleEditor((p) => ({ ...p, show: false, uid: null, customStyles: `` }));
     };
-
-    function Draggable({
-        children,
-        elementType,
-        uid,
-        isWidget
-    }: {
-        children: ReactNode;
-        elementType: FormElement['elementType'];
-        uid: string;
-        isWidget: boolean;
-    }) {
-        const [dragElement, setDragElement] = useState<{
-            elementType: string;
-            uid: string;
-            isWidget: boolean;
-        } | null>(null);
-
-        const [isDragging, setIsDragging] = useState(false);
-        const [position, setPosition] = useState({ x: 0, y: 0 });
-        const [offset, setOffset] = useState({ x: 0, y: 0 });
-
-        const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            setIsDragging(true);
-            setOffset({
-                x: e.clientX - position.x,
-                y: e.clientY - position.y
-            });
-            setDragElement({ elementType, uid, isWidget });
-        };
-
-        const handleMouseUp = () => {
-            setIsDragging(false);
-            setPosition({
-                x: 0,
-                y: 0
-            });
-            const dropZone = dropZoneRef.current;
-            if (!dropZone) return;
-            dropZone.style.backgroundColor = 'hsl(0, 0%, 95%)';
-            setDragElement(null);
-        };
-
-        useEffect(() => {
-            const handleDrop = () => {
-                if (dragElement?.isWidget) {
-                    const formElement = formElements.find((fe) => fe.elementType === dragElement?.elementType);
-                    if (formElement) setFormData((prev) => [...prev, { ...formElement, uid: nanoid(), pid: rootPid }]);
-                }
-            };
-            const handleMouseMove = (e: MouseEvent) => {
-                if (isDragging) {
-                    setPosition({
-                        x: e.clientX - offset.x,
-                        y: e.clientY - offset.y
-                    });
-
-                    const dropZone = dropZoneRef.current;
-                    if (!dropZone) return;
-                    if (!(e.target instanceof HTMLDivElement)) return;
-
-                    const { clientX, clientY } = e;
-                    const dropAreaRect = dropZone.getBoundingClientRect();
-
-                    if (
-                        clientX > dropAreaRect.left &&
-                        clientX < dropAreaRect.right &&
-                        clientY > dropAreaRect.top &&
-                        clientY < dropAreaRect.bottom
-                    ) {
-                        dropZone.style.backgroundColor = 'hsl(0, 0%, 85%)';
-                        if (!isDragging) handleDrop();
-                    } else {
-                        dropZone.style.backgroundColor = 'hsl(0, 0%, 95%)';
-                    }
-                }
-            };
-
-            if (isDragging) document.addEventListener('mousemove', handleMouseMove);
-            else document.removeEventListener('mousemove', handleMouseMove);
-
-            return () => document.removeEventListener('mousemove', handleMouseMove);
-        }, [isDragging, offset.x, offset.y, dragElement?.elementType, dragElement?.isWidget]);
-
-        return (
-            <div
-                style={{
-                    position: 'relative',
-                    // left: position.x,
-                    // top: position.y,
-                    transform: `translate(${position.x}px, ${position.y}px)`,
-                    cursor: isDragging ? 'grabbing' : 'grab',
-                    userSelect: 'none',
-                    zIndex: isDragging ? 999 : 998
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-            >
-                {children}
-            </div>
-        );
-    }
     return (
         <>
             <GlobalStyle />
@@ -328,27 +225,11 @@ function Builder() {
                     <h2 className='sidebar__title'>FORM ELEMENTS</h2>
                     {formElements.map(({ elementType }, i) => (
                         <div className='sidebar-item' key={i}>
-                            <div
-                                className='sidebar-item__background'
-                                // draggable
-                                // onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
-                                //     (e.target as HTMLDivElement).style.cursor = 'move';
-                                //     handleDragStart(elementType, '', true);
-                                // }}
-                                // onDragEnd={handleDragEnd}
-                            >
+                            <div className='sidebar-item__background'>
                                 {elementType}
                             </div>
-                            <Draggable elementType={elementType} uid={''} isWidget={true}>
-                                <div
-                                    className='sidebar-item__draggable'
-                                    // draggable
-                                    // onDragStart={(e: React.DragEvent<HTMLDivElement>) => {
-                                    //     (e.target as HTMLDivElement).style.cursor = 'move';
-                                    //     handleDragStart(elementType, '', true);
-                                    // }}
-                                    // onDragEnd={handleDragEnd}
-                                >
+                            <Draggable elementType={elementType} uid={''} isWidget={true} dropZoneRef={dropZoneRef} setFormData={setFormData}>
+                                <div className='sidebar-item__draggable'>
                                     {elementType}
                                 </div>
                             </Draggable>
@@ -359,16 +240,14 @@ function Builder() {
                     <div
                         ref={dropZoneRef}
                         className='form-editor__droppoint'
-                        // onDragOver={handleDragOverContainer}
-                        // onDrop={handleDrop}
-                        // onMouseEnter={() => {
-                        //     console.log('enter');
-                        // }}
-                        // onDragEnter={() => console.log('ert')}
                     >
                         {/* {formData.map((fe, i) => generateFormHtml(fe, fe.uid, i))} */}
-                        {formData.map((fe, i) => (
-                            <div key={i}>{fe.elementType}</div>
+                        {formData.map(({elementType,uid}, i) => (
+                            <div key={i} id={uid}>
+                                <Draggable elementType={elementType} uid={uid} isWidget={false} dropZoneRef={dropZoneRef} setFormData={setFormData}>
+                                    {elementType}
+                                </Draggable>
+                            </div>
                         ))}
                     </div>
                     <div className='form-editor__btn-wrapper'>
