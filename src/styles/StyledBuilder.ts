@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledBuilder = styled.div`
     width: 100%;
@@ -9,37 +9,52 @@ const StyledBuilder = styled.div`
     align-items: flex-start;
 
     & .sidebar {
-        padding: .4em;
-        border: 1px solid var(--neutral-color-300);
+        padding: 1em;
+        width: 300px;
+        background-color: var(--neutral-color-100);
         border-radius: 3px;
+
+        user-select: none;
+    }
+
+    & .sidebar__title {
+        margin-bottom: 1.4em;
+        font-weight: bold;
+        font-size: 0.85rem;
+        color: var(--neutral-color-600);
     }
 
     & .sidebar-item {
-        margin: .4em 0;
-        padding: .6em 3.8em .6em 1em;
-        font-size: .9rem;
-        background-color: var(--neutral-color-100);
+        position: relative;
+    }
+
+    & .sidebar-item__background,
+    & .sidebar-item__draggable {
+        /* position: relative;
+        z-index: 1; */
+        padding: 0.7em;
+        width: 100%;
+        font-size: 0.9rem;
         color: var(--neutral-color-700);
-        border: 1px solid var(--neutral-color-300);
         border-radius: 3px;
-        cursor: pointer;
-        transition: background-color 130ms ease-in,
-                    color 130ms ease-in,
-                    border-color 130ms ease-in;
+        transition: background-color 130ms ease-in, color 130ms ease-in;
     }
 
-    & .sidebar-item:first-child {
-        margin-top: 0;
+    & .sidebar-item__background {
+        position: absolute;
+        background-color: var(--neutral-color-200);
+        opacity: 0.5;
     }
 
-    & .sidebar-item:last-child {
-        margin-bottom: 0;
+    & .sidebar-item__draggable {
+        background-color: var(--neutral-color-100);
+        /* position: absolute; */
+        /* display: none; */
     }
 
-    & .sidebar-item:hover {
-        background-color: var(--primary-color-light);
-        color: var(--neutral-color-100);
-        border-color: var(--primary-color-dark);
+    & .sidebar-item__draggable:hover {
+        background-color: var(--neutral-color-200);
+        color: var(--neutral-color-700);
     }
 
     & .form-editor {
@@ -74,15 +89,11 @@ const StyledBuilder = styled.div`
         content: 'Drag and drop your input fields here';
     }
 
-    & .form-editor__droppoint.border-color {
-        border-color: var(--primary-color)
-    }
-
     & .form-editor__droppoint .form-element.hidden-input {
         padding-left: 1em;
         width: 100%;
         height: 40px;
-        font-size: .9rem;
+        font-size: 0.9rem;
         color: var(--neutral-color-500);
         border: 1px solid var(--neutral-color-400);
         border-radius: 3px;
@@ -99,18 +110,16 @@ const StyledBuilder = styled.div`
     & .form-editor__btn-save,
     & .element-editor__btn-submit,
     & .element-editor__btn-cancel,
-    & .style-editor__btn-save, 
+    & .style-editor__btn-save,
     & .style-editor__btn-cancel {
-        padding: .6em;
+        padding: 0.6em;
         width: 6.25em;
-        font-size: .9rem;
+        font-size: 0.9rem;
         text-align: center;
         border: 2px solid var(--primary-color-light);
         border-radius: 3px;
         cursor: pointer;
-        transition: background-color 130ms ease-in,
-                    border-color 130ms ease-in,
-                    color 130ms ease-in;
+        transition: background-color 130ms ease-in, border-color 130ms ease-in, color 130ms ease-in;
     }
 
     & .form-editor__btn-save,
@@ -153,12 +162,17 @@ const StyledBuilder = styled.div`
         top: 0;
         left: 0;
         transform: translateY(-18px);
-        font-size: .8em;
+        font-size: 0.8em;
         color: var(--neutral-color-600);
     }
 
     & .form-editor__droppoint .form-element {
         position: relative;
+        cursor: move;
+    }
+
+    & .form-editor__droppoint .form-element.is-dragging {
+        opacity: 0.3;
     }
 
     & .form-editor__droppoint .form-element:hover > .form-element__modify-options {
@@ -166,7 +180,7 @@ const StyledBuilder = styled.div`
     }
 
     & .form-editor__droppoint .form-element > .form-element__modify-options {
-        padding: .1em;
+        padding: 0.1em;
         position: absolute;
         z-index: 10;
         top: -2px;
@@ -184,7 +198,7 @@ const StyledBuilder = styled.div`
     }
 
     & .form-editor__droppoint .form-element__modify-options button {
-        margin: .2em .3em;
+        margin: 0.2em 0.3em;
         background: none;
         border: none;
         cursor: pointer;
@@ -218,7 +232,7 @@ const StyledBuilder = styled.div`
         resize: none;
         width: 100%;
         height: 400px;
-        font-size: .9rem;
+        font-size: 0.9rem;
         color: var(--neutral-color-500);
         border: 1px solid var(--neutral-color-400);
         border-radius: 3px;
@@ -231,7 +245,7 @@ const StyledBuilder = styled.div`
     }
 
     & .style-editor__btn-wrapper button {
-        margin-right: .4em;
+        margin-right: 0.4em;
     }
 
     & .element-editor--popup-bg {
@@ -243,8 +257,7 @@ const StyledBuilder = styled.div`
         background-color: rgba(0, 0, 0, 0.6);
         opacity: 0;
         visibility: hidden;
-        transition: opacity 150ms ease-in,
-                    visibility 150ms ease-in;
+        transition: opacity 150ms ease-in, visibility 150ms ease-in;
         z-index: 2;
         display: flex;
         justify-content: center;
@@ -258,12 +271,8 @@ const StyledBuilder = styled.div`
         max-height: calc(100vh - 140px);
         background-color: var(--neutral-color-100);
         border-radius: 3px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.07),
-        0 2px 4px rgba(0,0,0,0.07),
-        0 4px 8px rgba(0,0,0,0.07),
-        0 8px 16px rgba(0,0,0,0.07),
-        0 16px 32px rgba(0,0,0,0.07),
-        0 32px 64px rgba(0,0,0,0.07);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.07), 0 4px 8px rgba(0, 0, 0, 0.07),
+            0 8px 16px rgba(0, 0, 0, 0.07), 0 16px 32px rgba(0, 0, 0, 0.07), 0 32px 64px rgba(0, 0, 0, 0.07);
         transform: scale(0.9);
         transition: transform 150ms ease-in;
         overflow-y: scroll;
@@ -309,43 +318,43 @@ const StyledBuilder = styled.div`
     }
 
     & .element-editor form > div {
-        margin: .6em 0;
+        margin: 0.6em 0;
     }
 
-    & .element-editor input[type=text],
-    & .element-editor input[type=number] {
-        padding: .65em .8em;
+    & .element-editor input[type='text'],
+    & .element-editor input[type='number'] {
+        padding: 0.65em 0.8em;
         width: 100%;
-        font-size: .9rem;
-        letter-spacing: .5px;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
         background-color: var(--neutral-color-100);
         color: var(--neutral-color-800);
         border: 1px solid var(--neutral-color-400);
         border-radius: 3px;
         outline: none;
     }
-    
-    & .element-editor input[type=text]::placeholder,
-    & .element-editor input[type=number]::placeholder {
+
+    & .element-editor input[type='text']::placeholder,
+    & .element-editor input[type='number']::placeholder {
         color: var(--neutral-color-500);
     }
 
     & .element-editor form span {
-        font-size: .9rem;
+        font-size: 0.9rem;
         color: var(--neutral-color-500);
         display: block;
     }
 
-    & .element-editor input[type=radio] {
+    & .element-editor input[type='radio'] {
         display: none;
     }
 
-    & .element-editor input[type=radio] + label {
+    & .element-editor input[type='radio'] + label {
         display: inline-block;
-        padding: .5em .5em .5em 1em;
-        margin-top: .4em;
+        padding: 0.5em 0.5em 0.5em 1em;
+        margin-top: 0.4em;
         width: 48%;
-        font-size: .9rem;
+        font-size: 0.9rem;
         background-color: transparent;
         color: var(--neutral-color-800);
         border: 1px solid var(--neutral-color-400);
@@ -354,11 +363,11 @@ const StyledBuilder = styled.div`
         position: relative;
     }
 
-    & .element-editor span + input[type=radio] + label {
+    & .element-editor span + input[type='radio'] + label {
         margin-right: 4%;
     }
 
-    & .element-editor input[type=radio] + label::before {
+    & .element-editor input[type='radio'] + label::before {
         content: '';
         position: absolute;
         right: 10px;
@@ -371,7 +380,7 @@ const StyledBuilder = styled.div`
         border-radius: 25px;
     }
 
-    & .element-editor input[type=radio]:checked + label::after {
+    & .element-editor input[type='radio']:checked + label::after {
         content: '';
         position: absolute;
         right: 12px;
@@ -384,7 +393,7 @@ const StyledBuilder = styled.div`
     }
 
     & .element-editor select {
-        padding: .4em 1.2em .4em .8em;
+        padding: 0.4em 1.2em 0.4em 0.8em;
         width: 100%;
         background-color: transparent;
         color: var(--neutral-color-800);
@@ -395,13 +404,13 @@ const StyledBuilder = styled.div`
 
     & .element-editor .element-editor__input-options-wrapper {
         margin-top: 1.6em;
-        padding: 0 .4em;
+        padding: 0 0.4em;
         border: 1px solid var(--neutral-color-300);
         border-radius: 3px;
     }
 
     & .element-editor .element-editor__input-options-wrapper > div {
-        margin: .5em 0;
+        margin: 0.5em 0;
     }
 
     & .element-editor__btn-wrapper {
@@ -409,9 +418,9 @@ const StyledBuilder = styled.div`
         justify-content: center;
     }
 
-    & .element-editor__btn-wrapper button{
-        margin: 1em .2em 0;
+    & .element-editor__btn-wrapper button {
+        margin: 1em 0.2em 0;
     }
-`
+`;
 
-export default StyledBuilder
+export default StyledBuilder;

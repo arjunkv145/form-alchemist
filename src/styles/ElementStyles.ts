@@ -10,7 +10,7 @@ const style1 = `
         font-size: .9rem;
         color: hsl(0, 0%, 31%);
     }
-        
+
     & input {
         padding: .65em .8em;
         width: 100%;
@@ -26,7 +26,7 @@ const style1 = `
     & input::placeholder {
         color: hsl(0, 0%, 46%);
     }
-`
+`;
 
 // for checkbox and radio
 const style2 = `
@@ -81,9 +81,9 @@ const style2 = `
         background-color: hsl(0, 0%, 62%);
         border-radius: 50%;
     }
-`
+`;
 
-const containerStyle = ``
+const containerStyle = ``;
 
 const textareaStyle = `
     margin-top: .6em;
@@ -112,7 +112,7 @@ const textareaStyle = `
     & textarea::placeholder {
         color: hsl(0, 0%, 46%);
     }
-`
+`;
 
 const selectStyle = `
     margin-top: .6em;
@@ -137,7 +137,7 @@ const selectStyle = `
         border-radius: 3px;
         cursor: pointer;
     }
-`
+`;
 
 const buttonStyle = `
     margin-top: .6em;
@@ -162,7 +162,7 @@ const buttonStyle = `
     & button:disabled {
         cursor: not-allowed;
     }
-`
+`;
 
 export {
     containerStyle,
@@ -175,4 +175,4 @@ export {
     style2 as checkboxStyle,
     style2 as radioStyle,
     buttonStyle
-}
+};
