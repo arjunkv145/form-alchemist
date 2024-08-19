@@ -9,7 +9,7 @@ const GlobalStyle = createGlobalStyle`
         --red-color: #d42b2b;
 
         --neutral-color-100: hsl(0, 0%, 95%);
-        --neutral-color-200: hsl(0, 0%, 87%);
+        --neutral-color-200: hsl(0, 0%, 90%);
         --neutral-color-300: hsl(0, 0%, 77%);
         --neutral-color-400: hsl(0, 0%, 62%);
         --neutral-color-500: hsl(0, 0%, 46%);

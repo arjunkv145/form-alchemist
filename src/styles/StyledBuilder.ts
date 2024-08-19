@@ -8,63 +8,36 @@ const StyledBuilder = styled.div`
 	display: flex;
 	align-items: flex-start;
 
-	/* overflow-x: hidden; */
-
 	& .sidebar {
-		padding: 1em;
-		width: 300px;
-		background-color: var(--neutral-color-100);
+		padding: 0.4em;
+		border: 1px solid var(--neutral-color-300);
 		border-radius: 3px;
-
-		user-select: none;
-	}
-
-	& .sidebar__title {
-		margin-bottom: 1.4em;
-		font-weight: bold;
-		font-size: 0.85rem;
-		color: var(--neutral-color-600);
 	}
 
 	& .sidebar-item {
-		position: relative;
-	}
-
-	& .sidebar-item__background,
-	& .sidebar-item__draggable {
-		padding: 0.7em;
-		width: 100%;
+		margin: 0.4em 0;
+		padding: 0.6em 3.8em 0.6em 1em;
 		font-size: 0.9rem;
-		color: var(--neutral-color-700);
-		border-radius: 3px;
-		transition: background-color 130ms ease-in, color 130ms ease-in;
-	}
-
-	& .sidebar-item__background {
-		position: absolute;
-		background-color: var(--neutral-color-200);
-		opacity: 0.5;
-	}
-
-	& .sidebar-item__draggable {
 		background-color: var(--neutral-color-100);
-	}
-
-	& .sidebar-item__draggable:hover {
-		background-color: var(--neutral-color-200);
 		color: var(--neutral-color-700);
+		border: 1px solid var(--neutral-color-300);
+		border-radius: 3px;
+		cursor: pointer;
+		transition: background-color 130ms ease-in, color 130ms ease-in, border-color 130ms ease-in;
 	}
 
-	& .drop-child > div {
-		background-color: skyblue;
-		height: 100px;
+	& .sidebar-item:first-child {
+		margin-top: 0;
 	}
 
-	& .drop-child.top-space {
-		margin-top: 50px;
+	& .sidebar-item:last-child {
+		margin-bottom: 0;
 	}
-	& .drop-child.bottom-space {
-		margin-bottom: 50px;
+
+	& .sidebar-item:hover {
+		background-color: var(--primary-color-light);
+		color: var(--neutral-color-100);
+		border-color: var(--primary-color-dark);
 	}
 
 	& .form-editor {
@@ -97,6 +70,10 @@ const StyledBuilder = styled.div`
 
 	& .form-editor__droppoint.show-inst::before {
 		content: 'Drag and drop your input fields here';
+	}
+
+	& .form-editor__droppoint.border-color {
+		border-color: var(--primary-color);
 	}
 
 	& .form-editor__droppoint .form-element.hidden-input {
@@ -158,9 +135,18 @@ const StyledBuilder = styled.div`
 		color: var(--neutral-color-100);
 	}
 
+	& .form-editor__droppoint .form-element {
+		position: relative;
+
+		&.is-dragging {
+			opacity: 0.3;
+		}
+	}
+
 	& .form-editor__droppoint .form-element--container {
 		margin: 1.2em 0;
 		min-height: 70px;
+		padding: 3em 0;
 		border: 2px dashed var(--neutral-color-300);
 		border-radius: 3px;
 		position: relative;
@@ -174,15 +160,6 @@ const StyledBuilder = styled.div`
 		transform: translateY(-18px);
 		font-size: 0.8em;
 		color: var(--neutral-color-600);
-	}
-
-	& .form-editor__droppoint .form-element {
-		position: relative;
-		cursor: move;
-	}
-
-	& .form-editor__droppoint .form-element.is-dragging {
-		opacity: 0.3;
 	}
 
 	& .form-editor__droppoint .form-element:hover > .form-element__modify-options {

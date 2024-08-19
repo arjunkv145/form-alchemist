@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import formElements, { FormElement } from '../formElements/formElements';
 import GlobalStyle from '../styles/GlobalStyle';
@@ -9,7 +9,6 @@ import editIcon from '../assets/edit.svg';
 import paletteIcon from '../assets/palette.svg';
 import deleteIcon from '../assets/delete.svg';
 import { rootPid } from '../constants/forms';
-import Draggable from './Draggable';
 
 function findIndexByUid(formElements: FormElement[], uid: string) {
 	for (let i = 0; i < formElements.length; i++) {
@@ -29,7 +28,11 @@ function findIndexByUid(formElements: FormElement[], uid: string) {
 
 function Builder() {
 	const [formData, setFormData] = useState<FormElement[]>([]);
-
+	const [dragElement, setDragElement] = useState<{
+		elementType: FormElement['elementType'];
+		uid: string;
+		isWidget: boolean;
+	} | null>(null);
 	const dropZoneRef = useRef<HTMLDivElement>(null);
 	// const formElementEditorRef = useRef<HTMLDivElement>(null);
 	// const [formElementEditor, setFormElementEditor] = useState<{ show: boolean; formElement: FormElement | null }>({
@@ -42,67 +45,118 @@ function Builder() {
 		customStyles: ``,
 	});
 
+	const handleDragStart = (
+		e: React.DragEvent<HTMLDivElement>,
+		elementType: FormElement['elementType'],
+		uid: string,
+		isWidget: boolean = false
+	) => {
+		e.stopPropagation();
+		setDragElement({ elementType, uid, isWidget });
+	};
+	const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		setDragElement(null);
+	};
+
 	const handleDragOverContainer = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
-	// const handleDragOverElement = (e: React.DragEvent<HTMLDivElement>, uid: string, dropIndex: number) => {
-	//     e.preventDefault();
-	//     if (e.target instanceof HTMLElement) {
-	//         if (e.currentTarget.id === currentDragElement?.uid) return;
-	//         const { top } = e.target.getBoundingClientRect();
-	//         const { clientY } = e;
-	//         const { clientHeight } = e.target;
+	// const handleDragOverElement = (e: React.DragEvent<HTMLDivElement>, pid: string, uid: string, dropIndex: number) => {
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	if (e.target instanceof HTMLElement) {
+	// 		if (e.currentTarget.id === dragElement?.uid) return;
+	// 		const { top } = e.target.getBoundingClientRect();
+	// 		const { clientY } = e;
+	// 		const { clientHeight } = e.target;
 
-	//         const verticalCenter = top + clientHeight / 2;
-	//         const distanceFromCenter = verticalCenter - clientY;
+	// 		const verticalCenter = top + clientHeight / 2;
+	// 		const distanceFromCenter = verticalCenter - clientY;
 
-	//         if (currentDragElement === null) return;
-	//         const currentElement = findIndexByUid(formData, currentDragElement.uid);
+	// 		if (dragElement === null) return;
+	// 		const currentElement = findIndexByUid(formData, dragElement.uid);
 
-	//         if (currentElement === null) {
-	//             console.log(distanceFromCenter);
-	//             return;
-	//         }
+	// 		if (currentElement === null) return;
 
-	//         if (currentElement.index + 1 === dropIndex && distanceFromCenter >= 0) return;
-	//         if (currentElement.index - 1 === dropIndex && distanceFromCenter <= 0) return;
-	//         const tempFormData = formData.filter((fe) => fe.uid !== currentDragElement.uid);
+	// 		if (currentElement.index + 1 === dropIndex && distanceFromCenter >= 0) return;
+	// 		if (currentElement.index - 1 === dropIndex && distanceFromCenter <= 0) return;
+	// 		const tempFormData = formData.filter(fe => fe.uid !== dragElement.uid);
 
-	//         const targetElement = findIndexByUid(formData, uid);
-	//         if (targetElement === null) return;
-	//         tempFormData.splice(targetElement.index, 0, currentElement.element);
-	//         setFormData([...tempFormData]);
-	//     }
+	// 		const targetElement = findIndexByUid(formData, uid);
+	// 		if (targetElement === null) return;
+	// 		tempFormData.splice(targetElement.index, 0, currentElement.element);
+	// 		setFormData([...tempFormData]);
+	// 	}
 	// };
+
+	const handleOnDrop = (dropZoneId: string) => {
+		if (!dragElement) return;
+		if (!dragElement.isWidget) return;
+
+		if (dropZoneId === rootPid) {
+			const formElement = formElements.find(fe => fe.elementType === dragElement.elementType);
+			if (!formElement) return;
+			setFormData(prev => [...prev, { ...formElement, uid: nanoid(), pid: rootPid }]);
+		} else if (dragElement.elementType === 'container') {
+			const formElement = formElements.find(fe => fe.elementType === dragElement.elementType);
+			if (!formElement) return;
+			setFormData(prev => [...prev, { ...formElement, uid: nanoid(), pid: rootPid }]);
+		} else {
+			const formElement = formElements.find(fe => fe.elementType === dragElement.elementType);
+			if (!formElement) return;
+			setFormData(prev =>
+				prev.map(fe =>
+					fe.uid === dropZoneId && fe.elementType === 'container'
+						? { ...fe, children: [...fe.children, { ...formElement, uid: nanoid(), pid: fe.uid }] }
+						: fe
+				)
+			);
+		}
+	};
 
 	const startEdit = (uid: string) => {
 		console.log(uid);
 	};
 
-	const remove = (uid: string) => setFormData(prev => prev.filter(fe => fe.uid !== uid));
+	const remove = (pid: string, uid: string) => {
+		if (pid === rootPid) setFormData(prev => prev.filter(fe => fe.uid !== uid));
+		else
+			setFormData(prev => {
+				const temp: FormElement[] = JSON.parse(JSON.stringify(prev));
+				return temp.map(fe =>
+					fe.elementType === 'container' && fe.uid === pid
+						? { ...fe, children: fe.children.filter(nfe => nfe.uid !== uid) }
+						: fe
+				);
+			});
+	};
 
 	const FormElementWrapper: React.FC<{
 		children: React.ReactNode;
-		elementType: string;
+		elementType: FormElement['elementType'];
+		pid: string;
 		uid: string;
 		customStyles: string;
 		index: number;
-	}> = ({ children, uid, customStyles }) => {
+	}> = ({ children, elementType, pid, uid, customStyles }) => {
 		return (
 			<>
 				<div className='form-element__modify-options'>
-					<button onClick={() => startEdit(uid)}>
-						<img
-							src={editIcon}
-							alt='edit icon'
-						/>
-					</button>
+					{elementType !== 'container' && (
+						<button onClick={() => startEdit(uid)}>
+							<img
+								src={editIcon}
+								alt='edit icon'
+							/>
+						</button>
+					)}
 					<button onClick={() => setStyleEditor(() => ({ show: true, uid, customStyles }))}>
 						<img
 							src={paletteIcon}
 							alt='palette icon'
 						/>
 					</button>
-					<button onClick={() => remove(uid)}>
+					<button onClick={() => remove(pid, uid)}>
 						<img
 							src={deleteIcon}
 							alt='delete icon'
@@ -114,9 +168,9 @@ function Builder() {
 		);
 	};
 
-	const generateFormHtml = (formElement: FormElement, uid: string, index: number) => {
+	const generateFormHtml = (formElement: FormElement, index: number) => {
 		let formElementHtml: ReactElement;
-		const { elementType, customStyles, attributes } = formElement;
+		const { elementType, pid, uid, customStyles } = formElement;
 
 		if (
 			elementType === 'name' ||
@@ -128,9 +182,11 @@ function Builder() {
 			elementType === 'time' ||
 			elementType === 'hidden'
 		) {
+			const { attributes } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -141,11 +197,25 @@ function Builder() {
 					<input {...attributes} />
 				</FormElementWrapper>
 			);
-		} else if (elementType === 'button') {
-			const { text, ...rest } = attributes;
+		} else if (elementType === 'container') {
+			const { children } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
+					uid={uid}
+					customStyles={customStyles}
+					index={index}
+				>
+					{children.map((fe, i) => generateFormHtml(fe, i))}
+				</FormElementWrapper>
+			);
+		} else if (elementType === 'button') {
+			const { text, ...rest } = formElement.attributes;
+			formElementHtml = (
+				<FormElementWrapper
+					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -154,10 +224,11 @@ function Builder() {
 				</FormElementWrapper>
 			);
 		} else if (elementType === 'textarea') {
-			const { label } = formElement;
+			const { label, attributes } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -167,10 +238,11 @@ function Builder() {
 				</FormElementWrapper>
 			);
 		} else if (elementType === 'select') {
-			const { label, optionsCount, options } = formElement;
+			const { label, attributes, optionsCount, options } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -191,10 +263,11 @@ function Builder() {
 				</FormElementWrapper>
 			);
 		} else if (elementType === 'checkbox') {
-			const { label, optionsCount, options } = formElement;
+			const { label, attributes, optionsCount, options } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -215,10 +288,11 @@ function Builder() {
 				</FormElementWrapper>
 			);
 		} else if (elementType === 'radio') {
-			const { label, optionsCount, options } = formElement;
+			const { label, attributes, optionsCount, options } = formElement;
 			formElementHtml = (
 				<FormElementWrapper
 					elementType={elementType}
+					pid={pid}
 					uid={uid}
 					customStyles={customStyles}
 					index={index}
@@ -240,15 +314,24 @@ function Builder() {
 		} else {
 			formElementHtml = <></>;
 		}
+
+		const isDragging = dragElement?.uid === uid;
+		const isContainer = elementType === 'container';
 		return (
 			<div
 				key={index}
-				// className={`form-element ${dragElement?.uid === uid && ' is-dragging'}`}
+				className={`form-element ${isDragging && 'is-dragging'} ${isContainer && 'form-element--container'}`}
 				id={uid}
-				draggable
+				// draggable
 				// onDragStart={(e: React.DragEvent<HTMLDivElement>) => handleDragStart(e, elementType, uid)}
-				// onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOverElement(e, uid, index)}
+				// onDragOver={(e: React.DragEvent<HTMLDivElement>) => handleDragOverElement(e, pid, uid, index)}
 				// onDragEnd={handleDragEnd}
+				onDrop={(e: React.DragEvent<HTMLDivElement>) => {
+					e.stopPropagation();
+					if (elementType === 'container') handleOnDrop(uid);
+					else if (formElement.pid !== rootPid) handleOnDrop(formElement.pid);
+					else handleOnDrop(rootPid);
+				}}
 			>
 				{formElementHtml}
 			</div>
@@ -258,30 +341,23 @@ function Builder() {
 	const updateStyle = () => {
 		const { uid, customStyles } = styleEditor;
 		setFormData(prev => prev.map(fe => (fe.uid === uid ? { ...fe, customStyles } : fe)));
-		setStyleEditor(p => ({ ...p, show: false, uid: null, customStyles: `` }));
 	};
 	return (
 		<>
 			<GlobalStyle />
 			<StyledBuilder>
 				<div className='sidebar'>
-					<h2 className='sidebar__title'>FORM ELEMENTS</h2>
-					{formElements.map(({ elementType }, i) => (
+					{formElements.map(({ elementType, uid }, i) => (
 						<div
 							className='sidebar-item'
 							key={i}
+							draggable
+							onDragStart={(e: React.DragEvent<HTMLDivElement>) =>
+								handleDragStart(e, elementType, uid, true)
+							}
+							onDragEnd={handleDragEnd}
 						>
-							<div className='sidebar-item__background'>{elementType}</div>
-							<Draggable
-								elementType={elementType}
-								uid={''}
-								isWidget={true}
-								dropZoneRef={dropZoneRef}
-								formData={formData}
-								setFormData={setFormData}
-							>
-								<div className='sidebar-item__draggable'>{elementType}</div>
-							</Draggable>
+							{elementType}
 						</div>
 					))}
 				</div>
@@ -289,27 +365,10 @@ function Builder() {
 					<div
 						ref={dropZoneRef}
 						className='form-editor__droppoint'
+						onDragOver={handleDragOverContainer}
+						onDrop={() => handleOnDrop(rootPid)}
 					>
-						{/* {formData.map((fe, i) => generateFormHtml(fe, fe.uid, i))} */}
-						{formData.map(({ elementType, uid }, i) => (
-							<div
-								key={i}
-								id={uid}
-								className='drop-child'
-							>
-								<Draggable
-									elementType={elementType}
-									uid={uid}
-									currentIndex={i}
-									isWidget={false}
-									dropZoneRef={dropZoneRef}
-									formData={formData}
-									setFormData={setFormData}
-								>
-									{elementType}
-								</Draggable>
-							</div>
-						))}
+						{formData.map((fe, i) => generateFormHtml(fe, i))}
 					</div>
 					<div className='form-editor__btn-wrapper'>
 						<button className='form-editor__btn-save'>save</button>
