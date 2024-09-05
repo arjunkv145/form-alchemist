@@ -1,2 +1,1 @@
-export const rootPid = 'root';
-export const optionsLimit = 10;
+export const nanoidLength = 10;

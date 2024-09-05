@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "antd": "^5.20.3",
     "form-alchemist": "file:",
     "nanoid": "^5.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "styled-components": "^6.1.12"
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

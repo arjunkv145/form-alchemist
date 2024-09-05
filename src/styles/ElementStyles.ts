@@ -83,8 +83,6 @@ const style2 = `
     }
 `;
 
-const containerStyle = ``;
-
 const textareaStyle = `
     margin-top: .6em;
     width: 100%;
@@ -165,7 +163,6 @@ const buttonStyle = `
 `;
 
 export {
-    containerStyle,
     style1 as textStyle,
     style1 as numberStyle,
     style1 as dateStyle,
