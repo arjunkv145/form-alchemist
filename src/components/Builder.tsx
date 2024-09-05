@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import formElements, { FormElement } from '../formElements/formElements';
 import GlobalStyle from '../styles/GlobalStyle';
@@ -291,24 +291,33 @@ function Builder() {
 						className='form-editor__droppoint'
 					>
 						{/* {formData.map((fe, i) => generateFormHtml(fe, fe.uid, i))} */}
+						<div
+							className='drop-zone-child'
+							data-zone-child={0}
+						></div>
 						{formData.map(({ elementType, uid }, i) => (
-							<div
-								key={i}
-								id={uid}
-								className='drop-child'
-							>
-								<Draggable
-									elementType={elementType}
-									uid={uid}
-									currentIndex={i}
-									isWidget={false}
-									dropZoneRef={dropZoneRef}
-									formData={formData}
-									setFormData={setFormData}
+							<React.Fragment key={i}>
+								<div
+									id={uid}
+									className='drop-child'
 								>
-									{elementType}
-								</Draggable>
-							</div>
+									<Draggable
+										elementType={elementType}
+										uid={uid}
+										currentIndex={i}
+										isWidget={false}
+										dropZoneRef={dropZoneRef}
+										formData={formData}
+										setFormData={setFormData}
+									>
+										{elementType}
+									</Draggable>
+								</div>
+								<div
+									className='drop-zone-child'
+									data-zone-child={i + 1}
+								></div>
+							</React.Fragment>
 						))}
 					</div>
 					<div className='form-editor__btn-wrapper'>

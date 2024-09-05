@@ -95,6 +95,7 @@ function Draggable({
 
 				children.forEach((child, childIndex) => {
 					if (child.id === uid) return;
+					console.log(child);
 					child.classList.remove('top-space');
 					child.classList.remove('bottom-space');
 

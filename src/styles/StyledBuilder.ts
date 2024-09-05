@@ -19,6 +19,15 @@ const StyledBuilder = styled.div`
 		user-select: none;
 	}
 
+	& .drop-zone-child {
+		height: 10px;
+		width: 100%;
+		border: 1px solid grey;
+		border-radius: 3px;
+
+		user-select: none;
+	}
+
 	& .sidebar__title {
 		margin-bottom: 1.4em;
 		font-weight: bold;
