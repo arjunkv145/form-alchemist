@@ -1,15 +1,10 @@
 import { FormElement } from './FormElements';
 
-export type DragElement =
-    | {
-          isWidget: true;
-          elementType: FormElement['elementType'];
-      }
-    | {
-          isWidget: false;
-          uid: string;
-      }
-    | null;
+export type DragElement = {
+    isWidget: boolean;
+    elementType: FormElement['elementType'];
+    uid: string;
+} | null;
 
 export type ElementEditor = {
     show: boolean;

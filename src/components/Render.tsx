@@ -1,34 +1,30 @@
 import { useState, useEffect } from 'react';
-import StyledRender from '../styles/StyledRender';
 import { FormElement } from '../types/FormElements';
-import generateFormHtml from '../utils/generateFormHtml';
+import GenerateFormHtml from '../utils/GenerateFormHtml';
 import { RenderProps } from '../types/Render';
 import { Form } from 'antd';
+import GlobalStyle from '../styles/GlobalStyle';
 
-function Render(props: RenderProps) {
+const Render: React.FC<RenderProps> = (props) => {
     if (!Array.isArray(props.formData)) throw new Error('The "form" prop must be an array.');
 
     const [formData, setFormData] = useState<FormElement[]>([]);
     const [form] = Form.useForm();
 
-    const handleSubmit = (values) => {
-        props.onSubmit(values);
-    };
-
     useEffect(() => {
         setFormData(() => props.formData);
     }, [props.formData]);
 
-    const onFinish = (data: unknown) => {
-        console.log(data);
+    const onFinish = (values: { [key: string]: string | number | string[] | number[] | boolean }) => {
+        // const modifiedData = Object.keys(values).map((item) => ({ fieldName: item, fieldValue: values[item] }));
+        props.onSubmit(values);
     };
 
-    const onFinishFailed = (data: unknown) => {
-        console.log(data);
-    };
+    const onFinishFailed = (data: unknown) => console.log(data);
 
     return (
-        <StyledRender>
+        <>
+            <GlobalStyle />
             <Form
                 form={form}
                 name='render-form'
@@ -37,19 +33,20 @@ function Render(props: RenderProps) {
                 onFinishFailed={onFinishFailed}
                 autoComplete='off'
             >
-                {formData.map((formElement, index) =>
-                    generateFormHtml({
-                        mode: 'Render',
-                        formData,
-                        setFormData,
-                        onSubmit: handleSubmit,
-                        formElement,
-                        index
-                    })
-                )}
+                {formData.map((formElement, index) => (
+                    <GenerateFormHtml
+                        mode='Render'
+                        formData={formData}
+                        setFormData={setFormData}
+                        formElement={formElement}
+                        index={index}
+                        dataSourceType={'dataSourceType' in formElement ? formElement.dataSourceType : null}
+                        apiOptions={'apiOptions' in formElement ? formElement.apiOptions : null}
+                    />
+                ))}
             </Form>
-        </StyledRender>
+        </>
     );
-}
+};
 
 export default Render;

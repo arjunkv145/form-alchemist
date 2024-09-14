@@ -1,4 +1,9 @@
-import { StyledTextArea } from './style';
+import styled from 'styled-components';
+import { Input } from 'antd';
+
+const { TextArea: AntTextarea } = Input;
+
+export const StyledTextArea = styled(AntTextarea)``;
 
 type TextareaProps = {
     value?: string;

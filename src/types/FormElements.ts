@@ -99,7 +99,7 @@ export type PhoneNumberElement = {
     elementType: 'phone number';
     requireCountryCode: boolean;
     label: string;
-    attributes: NumberAttributes;
+    attributes: Omit<NumberAttributes, 'min' | 'max'>;
     uid: string;
     labelPosition: 'top' | 'left';
     labelStyles: string;
@@ -140,6 +140,14 @@ export type TextareaElement = {
     required: boolean;
 };
 
+export type OptionsApiConfig = {
+    url: string;
+    requestHeaders: { [key: string]: string | number | boolean }[];
+    dataPath: string;
+    labelKey: string;
+    valueKey: string;
+};
+
 type SelectOptions = {
     label: string;
     value: string;
@@ -155,7 +163,9 @@ export type SelectElement = {
     labelPosition: 'top' | 'left';
     labelStyles: string;
     elementStyles: string;
+    dataSourceType: 'values' | 'api';
     options: SelectOptions[];
+    apiOptions: OptionsApiConfig;
     required: boolean;
 };
 
@@ -174,7 +184,9 @@ export type CheckboxElement = {
     labelPosition: 'top' | 'left';
     labelStyles: string;
     elementStyles: string;
+    dataSourceType: 'values' | 'api';
     options: CheckboxOptions[];
+    apiOptions: OptionsApiConfig;
     required: boolean;
 };
 
@@ -193,7 +205,9 @@ export type RadioElement = {
     labelPosition: 'top' | 'left';
     labelStyles: string;
     elementStyles: string;
+    dataSourceType: 'values' | 'api';
     options: RadioOptions[];
+    apiOptions: OptionsApiConfig;
     required: boolean;
 };
 

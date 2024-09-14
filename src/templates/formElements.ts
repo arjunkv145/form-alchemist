@@ -49,14 +49,12 @@ const formElements: FormElement[] = [
         elementStyles: '',
         required: true,
         attributes: {
-            type: 'number',
+            type: 'tel',
             id: '',
             name: 'phoneNumber',
             placeholder: '',
             readOnly: false,
-            disabled: false,
-            min: 0,
-            max: 100
+            disabled: false
         }
     },
     {
@@ -131,14 +129,15 @@ const formElements: FormElement[] = [
             disabled: false,
             multiple: false
         },
-        options: [
-            {
-                label: '',
-                value: '',
-                selected: false,
-                disabled: false
-            }
-        ]
+        dataSourceType: 'values',
+        options: [],
+        apiOptions: {
+            url: '',
+            requestHeaders: [],
+            dataPath: '',
+            labelKey: '',
+            valueKey: ''
+        }
     },
     {
         elementType: 'checkbox',
@@ -152,14 +151,15 @@ const formElements: FormElement[] = [
             type: 'checkbox',
             name: ''
         },
-        options: [
-            {
-                label: '',
-                value: '',
-                checked: false,
-                disabled: false
-            }
-        ]
+        dataSourceType: 'values',
+        options: [],
+        apiOptions: {
+            url: '',
+            requestHeaders: [],
+            dataPath: '',
+            labelKey: '',
+            valueKey: ''
+        }
     },
     {
         elementType: 'radio',
@@ -174,14 +174,15 @@ const formElements: FormElement[] = [
             name: '',
             disabled: false
         },
-        options: [
-            {
-                label: '',
-                value: '',
-                checked: false,
-                disabled: false
-            }
-        ]
+        dataSourceType: 'values',
+        options: [],
+        apiOptions: {
+            url: '',
+            requestHeaders: [],
+            dataPath: '',
+            labelKey: '',
+            valueKey: ''
+        }
     },
     {
         elementType: 'date',

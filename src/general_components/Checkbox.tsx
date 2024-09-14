@@ -1,6 +1,8 @@
 import React from 'react';
-import { CheckboxProps } from 'antd';
-import { StyledCheckbox } from './style';
+import styled from 'styled-components';
+import { Checkbox as AntCheckbox, CheckboxProps } from 'antd';
+
+export const StyledCheckbox = styled(AntCheckbox)``;
 
 const Checkbox: React.FC<CheckboxProps> = ({ children, ...props }) => {
     return <StyledCheckbox {...props}>{children ? children : ''}</StyledCheckbox>;
