@@ -24,21 +24,21 @@ npm install form-alchemist
 import { Builder } from 'form-alchemist';
 
 function App() {
-	// Initial form data (optional), used to edit an existing form
+    // Initial form data (optional), used to edit an existing form
 	const formData = [];
 
-	// Callback function to handle form saving
-	const onSave = formJsonData => {
-		console.log('Form saved:', formJsonData);
-		// Handle or store form JSON data
-	};
+    // Callback function to handle form saving
+    const onSave = formJsonData => {
+        console.log('Form saved:', formJsonData);
+        // Handle or store form JSON data
+    };
 
-	return (
-		<Builder
-			formData={formData}
-			onSave={onSave}
-		/>
-	);
+    return (
+        <Builder
+            formData={formData}
+            onSave={onSave}
+        />
+    );
 }
 ```
 
